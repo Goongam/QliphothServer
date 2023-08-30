@@ -1,5 +1,5 @@
 const {login, verifyToken, loginTokenVerify} = require('./auth');
-const {getAllProducts, insertClothes, getProduct, addProduct, deleteProduct, updateProduct, insertRank, getRankBySong} = require('./dbUtil');
+const {getAllProducts, insertClothes, getProduct, addProduct, deleteProduct, updateProduct, insertRank, getRankBySong, createUser} = require('./dbUtil');
 
 // const verifyToken = require('./auth');
 
@@ -33,13 +33,30 @@ app.use(helmet.contentSecurityPolicy({
 }));
 
 
+  app.post('/create', async (req, res) =>{
+    const {user_id, nickname} = req.body;
 
+    console.log(user_id,nickname);
+
+    
+    if(user_id && nickname){
+      createUser(user_id,nickname).then(()=>{
+        res.send('회원 등록 성공');
+      }).catch(()=>{
+        res.status(401).send("회원 등록 에러");
+      })
+    }else{
+      res.status(400).json({ error: "Invalid data" });
+    }
+  });
   app.post('/score', async (req,res)=>{
 
-    const {song_id, user_id, score} = req.body;
+    const {song_id, user_id, score, progress} = req.body;
 
+    console.log(progress);
+    
     if(song_id && user_id && score){
-      insertRank(song_id, user_id, score).then(()=>{
+      insertRank(song_id, user_id, score, progress).then(()=>{
         res.send('랭킹 입력 성공');
       }).catch(()=>{
         res.status(401).send("랭킹 입력 에러");
