@@ -1,5 +1,5 @@
 const {login, verifyToken, loginTokenVerify} = require('./auth');
-const {getAllProducts, insertClothes, getProduct, addProduct, deleteProduct, updateProduct, insertRank, getRankBySong, createUser} = require('./dbUtil');
+const {getAllProducts, insertClothes, getProduct, addProduct, deleteProduct, updateProduct, insertRank, getRankBySong, createUser, checkDuplicationNickname, getMyRankBySong} = require('./dbUtil');
 
 // const verifyToken = require('./auth');
 
@@ -33,6 +33,20 @@ app.use(helmet.contentSecurityPolicy({
 }));
 
 
+  app.get('/nick/:nickname',(req,res) => {
+    const {nickname} = req.params;
+
+    if(!nickname){
+      return res.status(400).json({ error: "Invalid data" });
+    }
+
+    checkDuplicationNickname(nickname).then(()=>{
+      res.status(200).send('사용 가능한 닉네임 입니다.');
+    }).catch(()=>{
+      res.status(401).send("중복된 닉네임 또는 확인 중 에러 발생");
+    })
+    
+  })
   app.post('/create', async (req, res) =>{
     const {user_id, nickname} = req.body;
 
@@ -71,7 +85,23 @@ app.use(helmet.contentSecurityPolicy({
 
     if(song_id){
       getRankBySong(song_id).then((row)=>{
-        res.send(row);
+        res.send({ranks: row, test:'test'});
+      }).catch((err)=>{
+        console.log(err);
+        
+        res.status(401).send({error: "error"});
+      })
+    }else{
+      res.status(400).json({ error: "Invalid data" });
+    }
+  })
+
+  app.get('/score/:songid/:user_id', (req, res)=>{
+    const {songid, user_id} = req.params;
+
+    if(songid && user_id){
+      getMyRankBySong(songid, user_id).then((row)=>{
+        res.send({ranks: row});
       }).catch((err)=>{
         console.log(err);
         
