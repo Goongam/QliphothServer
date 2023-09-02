@@ -74,10 +74,11 @@ async function insertRank(song_id, user_id, score, progress){
 //SELECT * FROM score_ranking where song_id = '${song_id}'
 //select song_id, nickname, score, progress, time from score_ranking, users where score_ranking.user_id = users.user_id and song_id = '1_Normal';
 async function getRankBySong(song_id, type){
+
     return new Promise((resolve, reject)=>{
         db.all(`select song_id, nickname, score, progress, time from score_ranking, users where score_ranking.user_id = users.user_id and song_id = '${song_id}' order by score DESC;`, (err, rows) => {
             if(err) reject(err);
-
+   
             const ranking = rows.map((row,index) => {return {...row, rank:index+1}});
             
             resolve(ranking);
@@ -135,6 +136,17 @@ async function getMyRankBySong(song_id, user_id){
                 resolve(ranking);
             })
            
+        })
+
+
+    });
+}
+
+async function getScore(song_id, user_id){
+    return new Promise((resolve, reject) => {
+        db.get(`select * from score_ranking, users where score_ranking.user_id = users.user_id and score_ranking.song_id = '${song_id}' and score_ranking.user_id = '${user_id}';`, 
+        (err, row)=>{
+           resolve(row);
         })
 
 
@@ -226,6 +238,14 @@ async function deleteProduct(id){
     })
 }
 
-module.exports = {getAllProducts, insertClothes, getProduct, addProduct, deleteProduct, updateProduct, insertRank, getRankBySong, createUser, checkDuplicationNickname, getMyRankBySong};
+module.exports = {
+    // getAllProducts, insertClothes, getProduct, addProduct, deleteProduct, updateProduct, 
+    insertRank, 
+    getRankBySong, 
+    createUser, 
+    checkDuplicationNickname, 
+    getMyRankBySong, 
+    getScore
+};
 
 

@@ -1,5 +1,13 @@
 const {login, verifyToken, loginTokenVerify} = require('./auth');
-const {getAllProducts, insertClothes, getProduct, addProduct, deleteProduct, updateProduct, insertRank, getRankBySong, createUser, checkDuplicationNickname, getMyRankBySong} = require('./dbUtil');
+const {
+  getAllProducts, insertClothes, getProduct, addProduct, deleteProduct, updateProduct, 
+  insertRank, 
+  getRankBySong, 
+  createUser, 
+  checkDuplicationNickname, 
+  getMyRankBySong,
+  getScore
+} = require('./dbUtil');
 
 // const verifyToken = require('./auth');
 
@@ -80,7 +88,7 @@ app.use(helmet.contentSecurityPolicy({
     }
   })
 
-  app.get('/score/:songid', (req, res)=>{
+  app.get('/rank/:songid', (req, res)=>{
     const song_id = req.params.songid;
 
     if(song_id){
@@ -96,7 +104,7 @@ app.use(helmet.contentSecurityPolicy({
     }
   })
 
-  app.get('/score/:songid/:user_id', (req, res)=>{
+  app.get('/rank/:songid/:user_id', (req, res)=>{
     const {songid, user_id} = req.params;
 
     if(songid && user_id){
@@ -112,6 +120,21 @@ app.use(helmet.contentSecurityPolicy({
     }
   })
 
+  app.get('/score/:songid/:user_id', (req, res)=>{
+    const {songid, user_id} = req.params;
+
+    if(songid && user_id){
+      getScore(songid, user_id).then((row)=>{
+        res.send(row);
+      }).catch((err)=>{
+        console.log(err);
+        
+        res.status(401).send({error: "error"});
+      })
+    }else{
+      res.status(400).json({ error: "Invalid data" });
+    }
+  })
   
   // GET /clothes - 모든 옷 항목 반환
   app.get('/clothes', async (req, res) => {
