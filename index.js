@@ -18,7 +18,7 @@ const csp = require('helmet-csp');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 const app = express()
-const port = 3000
+const port = 5001
 
 const corsOptions = {
     origin: (origin, callback) => {
