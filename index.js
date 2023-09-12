@@ -71,7 +71,7 @@ app.use(helmet.contentSecurityPolicy({
       res.status(400).json({ error: "Invalid data" });
     }
   });
-  app.post('/score', async (req,res)=>{
+  app.post('/rank', async (req,res)=>{
 
     const {song_id, user_id, score, progress} = req.body;
 
