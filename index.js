@@ -6,7 +6,8 @@ const {
   createUser, 
   checkDuplicationNickname, 
   getMyRankBySong,
-  getScore
+  getScore,
+  getAllScoreByUser
 } = require('./dbUtil');
 
 // const verifyToken = require('./auth');
@@ -125,6 +126,22 @@ app.use(helmet.contentSecurityPolicy({
 
     if(songid && user_id){
       getScore(songid, user_id).then((row)=>{
+        res.send(row);
+      }).catch((err)=>{
+        console.log(err);
+        
+        res.status(401).send({error: "error"});
+      })
+    }else{
+      res.status(400).json({ error: "Invalid data" });
+    }
+  })
+
+  app.get('/score/:user_id', (req, res)=>{
+    const {user_id} = req.params;
+    
+    if(user_id){
+      getAllScoreByUser(user_id).then((row)=>{
         res.send(row);
       }).catch((err)=>{
         console.log(err);
