@@ -146,6 +146,8 @@ async function getScore(song_id, user_id){
     return new Promise((resolve, reject) => {
         db.get(`select * from score_ranking, users where score_ranking.user_id = users.user_id and score_ranking.song_id = '${song_id}' and score_ranking.user_id = '${user_id}';`, 
         (err, row)=>{
+            if(err) reject(err);
+
            resolve(row);
         })
     });
@@ -153,8 +155,9 @@ async function getScore(song_id, user_id){
 
 async function getAllScoreByUser(user_id){
     return new Promise((resolve, reject) => {
-        db.all(`select * from score_ranking, users where score_ranking.user_id = users.user_id and score_ranking.user_id = '${user_id}';`, 
+        db.all(`select song_id as songID, score_ranking.user_id, score, progress, time, nickname from score_ranking, users where score_ranking.user_id = users.user_id and score_ranking.user_id = '${user_id}';`, 
         (err, rows)=>{
+            if(err) reject(err);
            resolve(rows);
         });
     });

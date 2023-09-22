@@ -130,7 +130,7 @@ app.use(helmet.contentSecurityPolicy({
       }).catch((err)=>{
         console.log(err);
         
-        res.status(401).send({error: "error"});
+        res.status(401).send({error: err});
       })
     }else{
       res.status(400).json({ error: "Invalid data" });
@@ -142,11 +142,11 @@ app.use(helmet.contentSecurityPolicy({
     
     if(user_id){
       getAllScoreByUser(user_id).then((row)=>{
-        res.send(row);
+        res.send({records:row});
       }).catch((err)=>{
         console.log(err);
         
-        res.status(401).send({error: "error"});
+        res.status(401).send({error: err});
       })
     }else{
       res.status(400).json({ error: "Invalid data" });
