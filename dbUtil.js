@@ -39,6 +39,8 @@ async function insertRank(song_id, user_id, score, progress){
           
             if(err) reject(err);
             
+            
+
             if(!row) {//첫 입력    
                 const stmt = db.prepare('INSERT INTO score_ranking (song_id, user_id, score, progress, time) VALUES (?, ?, ?, ?, datetime("now","localtime"))')
                 stmt.run(song_id, user_id, +score, progress);
@@ -50,7 +52,7 @@ async function insertRank(song_id, user_id, score, progress){
                         resolve();
                     }
                 });
-            }else{//기록 갱신    
+            }else if(row.score < score){//기록 갱신    
                 const stmt = db.prepare(`UPDATE score_ranking SET score=?, progress=? time=datetime("now","localtime") WHERE song_id=? and user_id=?`);
                 stmt.run(score,progress, song_id, user_id);
                 stmt.finalize((err)=> {
